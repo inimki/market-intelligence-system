@@ -152,3 +152,10 @@ n8n :5678 ────────────→ FastAPI
 部署文档参考 [Crawl4AI](https://github.com/unclecode/crawl4ai/blob/main/deploy/docker/README.md)
 及 [Browser Use Web UI](https://github.com/browser-use/web-ui) 的环境模板、Compose 与健康检查做法。
 Nginx 配置参考[官方反向代理文档](https://nginx.org/en/docs/http/ngx_http_proxy_module.html)。
+
+## AI 辅助开发致谢
+
+本项目由 [inimki](https://github.com/inimki) 发起和维护，使用 OpenAI Codex
+辅助完成代码实现、问题排查、部署配置、测试和文档整理。
+Codex 在本项目中作为 AI 开发助手使用；项目维护和发布由维护者负责。
+此致谢不代表 OpenAI 对本项目的官方参与或背书。
