@@ -1,0 +1,106 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-market_intel}
+      POSTGRES_USER: ${POSTGRES_USER:-market_intel}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?请在.env中设置POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./deploy/postgres-init.sql:/docker-entrypoint-initdb.d/10-create-n8n.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-market_intel} -d ${POSTGRES_DB:-market_intel}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build: .
+    restart: unless-stopped
+    environment:
+      APP_ENV: production
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-market_intel}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-market_intel}
+      REPORT_DIR: /app/data/reports
+      RAW_DIR: /app/data/raw
+      COLLECTOR_SERVICE_URL: http://collector:8011
+      ANALYSIS_SERVICE_URL: http://analysis:8012
+    volumes:
+      - reports_data:/app/data/reports
+      - raw_data:/app/data/raw
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      collector:
+        condition: service_started
+
+  collector:
+    build:
+      context: .
+      dockerfile: Dockerfile.collector
+    restart: unless-stopped
+    shm_size: 2gb
+    environment:
+      BROWSER_USE_API_KEY: ${BROWSER_USE_API_KEY:-}
+      AI_PROVIDER: ${AI_PROVIDER:-deepseek}
+      AI_API_KEY: ${AI_API_KEY:-}
+      AI_BASE_URL: ${AI_BASE_URL:-https://api.deepseek.com}
+      AI_MODEL: ${AI_MODEL:-deepseek-chat}
+    volumes:
+      - raw_data:/app/data/raw
+    expose:
+      - "8011"
+
+  analysis:
+    build:
+      context: .
+      dockerfile: Dockerfile.analysis
+    restart: unless-stopped
+    working_dir: /tmp
+    read_only: true
+    cap_drop: ["ALL"]
+    security_opt: ["no-new-privileges:true"]
+    tmpfs:
+      - /tmp:size=256m
+    environment:
+      REPORT_DIR: /tmp/reports
+      RAW_DIR: /tmp/raw
+      AI_PROVIDER: ${AI_PROVIDER:-deepseek}
+      AI_API_KEY: ${AI_API_KEY:-}
+      AI_BASE_URL: ${AI_BASE_URL:-https://api.deepseek.com}
+      AI_MODEL: ${AI_MODEL:-deepseek-chat}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+    expose:
+      - "8012"
+
+  n8n:
+    image: docker.n8n.io/n8nio/n8n:2.32.7
+    restart: unless-stopped
+    environment:
+      DB_TYPE: postgresdb
+      DB_POSTGRESDB_HOST: postgres
+      DB_POSTGRESDB_PORT: 5432
+      DB_POSTGRESDB_DATABASE: n8n
+      DB_POSTGRESDB_USER: ${POSTGRES_USER:-market_intel}
+      DB_POSTGRESDB_PASSWORD: ${POSTGRES_PASSWORD}
+      N8N_ENCRYPTION_KEY: ${N8N_ENCRYPTION_KEY:?请在.env中设置N8N_ENCRYPTION_KEY}
+      N8N_HOST: ${N8N_HOST:-localhost}
+      N8N_PORT: 5678
+      N8N_PROTOCOL: ${N8N_PROTOCOL:-http}
+      GENERIC_TIMEZONE: Asia/Shanghai
+    volumes:
+      - n8n_data:/home/node/.n8n
+      - ./workflows:/files/workflows:ro
+    ports:
+      - "5678:5678"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+  n8n_data:
+  reports_data:
+  raw_data:

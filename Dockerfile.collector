@@ -1,0 +1,19 @@
+FROM public.ecr.aws/docker/library/python:3.11-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PIP_NO_CACHE_DIR=1 \
+    PIP_INDEX_URL=https://mirrors.aliyun.com/pypi/simple/ \
+    PIP_DEFAULT_TIMEOUT=120 PIP_RETRIES=10 \
+    PLAYWRIGHT_BROWSERS_PATH=/ms-playwright \
+    PLAYWRIGHT_DOWNLOAD_CONNECTION_TIMEOUT=120000
+WORKDIR /app
+COPY pyproject.toml README.md ./
+COPY app ./app
+COPY data/demo_documents.json ./data/demo_documents.json
+RUN pip install --upgrade pip \
+    && pip install -e ".[collectors]" \
+    && python -m playwright install --with-deps chromium
+RUN useradd --create-home --uid 10001 collector \
+    && chown -R collector:collector /app /ms-playwright
+USER collector
+EXPOSE 8011
+CMD ["uvicorn", "app.collector_service:app", "--host", "0.0.0.0", "--port", "8011"]

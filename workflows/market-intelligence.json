@@ -1,0 +1,80 @@
+{
+  "id": "marketIntelDaily01",
+  "name": "市场情报自动收集与报告",
+  "nodes": [
+    {
+      "parameters": {"rule": {"interval": [{"field": "cronExpression", "expression": "0 8 * * *"}]}},
+      "id": "schedule-trigger",
+      "name": "每天08:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [-480, 80]
+    },
+    {
+      "parameters": {},
+      "id": "manual-trigger",
+      "name": "手动测试",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [-480, -80]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://api:8000/api/runs",
+        "sendBody": false,
+        "options": {"timeout": 600000}
+      },
+      "id": "run-pipeline",
+      "name": "运行市场情报流水线",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-220, 0]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {"caseSensitive": true, "leftValue": "", "typeValidation": "strict"},
+          "conditions": [{"leftValue": "={{ $json.status }}", "rightValue": "failed", "operator": {"type": "string", "operation": "notEquals"}}],
+          "combinator": "and"
+        }
+      },
+      "id": "success-check",
+      "name": "运行成功？",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [20, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{json:{message:`市场情报运行完成：新增 ${$json.inserted_count} 条，重复 ${$json.duplicate_count} 条，失败 ${$json.failed_count} 个信源。报告：${$json.report_path}`, ...$json}}];"
+      },
+      "id": "success-summary",
+      "name": "生成成功通知",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [280, -80]
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{json:{message:`市场情报运行失败：${($json.errors || []).join('; ')}`, ...$json}}];"
+      },
+      "id": "failure-summary",
+      "name": "生成失败告警",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [280, 100]
+    }
+  ],
+  "connections": {
+    "每天08:00": {"main": [[{"node": "运行市场情报流水线", "type": "main", "index": 0}]]},
+    "手动测试": {"main": [[{"node": "运行市场情报流水线", "type": "main", "index": 0}]]},
+    "运行市场情报流水线": {"main": [[{"node": "运行成功？", "type": "main", "index": 0}]]},
+    "运行成功？": {"main": [[{"node": "生成成功通知", "type": "main", "index": 0}], [{"node": "生成失败告警", "type": "main", "index": 0}]]}
+  },
+  "active": false,
+  "settings": {"executionOrder": "v1", "timezone": "Asia/Shanghai"},
+  "versionId": "18a29a0b-89fd-46d5-9e6f-782174c3375a",
+  "meta": {"templateCredsSetupCompleted": false},
+  "tags": []
+}

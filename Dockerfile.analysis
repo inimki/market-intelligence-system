@@ -1,0 +1,13 @@
+FROM public.ecr.aws/docker/library/python:3.11-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PIP_NO_CACHE_DIR=1 \
+    PIP_INDEX_URL=https://mirrors.aliyun.com/pypi/simple/ \
+    PIP_DEFAULT_TIMEOUT=120 PIP_RETRIES=10
+WORKDIR /app
+COPY pyproject.toml README.md ./
+COPY app ./app
+RUN pip install --upgrade pip && pip install -e ".[ai]"
+RUN useradd --create-home --uid 10001 analyst && chown -R analyst:analyst /app
+USER analyst
+EXPOSE 8012
+CMD ["uvicorn", "app.ai_service:app", "--host", "0.0.0.0", "--port", "8012"]

@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>市场情报控制台</title>
+  <style>
+    :root{--bg:#f4f6f1;--surface:#fff;--ink:#17221d;--muted:#65736b;--green:#0d6b4f;--mint:#dff3e9;--line:#dce3dc;--orange:#d9772d;--red:#b94343}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:"Microsoft YaHei","PingFang SC",system-ui,sans-serif;line-height:1.65}
+    a{color:inherit}.shell{max-width:1320px;margin:auto;padding:0 28px}.topbar{height:70px;display:flex;align-items:center;justify-content:space-between}.brand{display:flex;align-items:center;gap:12px;text-decoration:none;font-weight:800}.brand-mark{width:38px;height:38px;display:grid;place-items:center;border-radius:12px;background:var(--green);color:white}.nav{display:flex;gap:10px}.button{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:10px 15px;border:1px solid var(--line);border-radius:10px;background:white;text-decoration:none;font-weight:700;font-size:14px}.button.primary{background:var(--green);border-color:var(--green);color:white}
+    .hero{margin-top:18px;padding:54px;border-radius:28px;background:linear-gradient(130deg,#093f32,#0d6b4f 58%,#18906d);color:white;position:relative;overflow:hidden}.hero:after{content:"";position:absolute;width:360px;height:360px;border:70px solid rgba(255,255,255,.06);border-radius:50%;right:-100px;top:-150px}.eyebrow{margin:0 0 12px;color:#a9edd4;font-size:13px;font-weight:800;letter-spacing:.15em}.hero h1{max-width:780px;margin:0;font-size:clamp(34px,5vw,64px);line-height:1.08;letter-spacing:-.04em}.hero p{max-width:730px;margin:20px 0 0;color:#d9f1e8;font-size:17px}.hero-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px;position:relative;z-index:1}.hero .button{background:white;border:0;color:var(--green)}.hero .button.ghost{background:rgba(255,255,255,.1);color:white;border:1px solid rgba(255,255,255,.25)}
+    .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:18px 0 34px}.metric{padding:22px;border:1px solid var(--line);border-radius:16px;background:var(--surface)}.metric strong{display:block;color:var(--green);font-size:34px;line-height:1.1}.metric span{color:var(--muted);font-size:13px}.section-head{display:flex;align-items:end;justify-content:space-between;margin:0 0 14px}.section-head h2{margin:0;font-size:24px}.section-head p{margin:0;color:var(--muted);font-size:14px}.grid{display:grid;grid-template-columns:1.05fr 1.95fr;gap:16px}.panel{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px}.source{display:grid;grid-template-columns:10px 1fr auto;gap:13px;align-items:start;padding:15px 0;border-bottom:1px solid var(--line)}.source:last-child{border:0}.dot{width:10px;height:10px;border-radius:50%;background:var(--green);margin-top:8px}.dot.off{background:#adb6b0}.source strong,.item strong{display:block}.source small,.item small{color:var(--muted);overflow-wrap:anywhere}.tag{display:inline-block;margin:7px 5px 0 0;padding:3px 8px;border-radius:999px;background:var(--mint);color:var(--green);font-size:11px}.status{padding:4px 9px;border-radius:999px;background:var(--mint);color:var(--green);font-size:12px;font-weight:700}.status.partial{background:#fff0dc;color:#9b571d}.status.failed{background:#fde8e8;color:var(--red)}.run{display:grid;grid-template-columns:70px 1fr auto;gap:14px;align-items:center;padding:15px 0;border-bottom:1px solid var(--line)}.run:last-child{border:0}.run .id{font-weight:800;color:var(--green)}.run small{display:block;color:var(--muted)}.item{padding:16px 0;border-bottom:1px solid var(--line)}.item:last-child{border:0}.item a{text-decoration:none}.item a:hover{color:var(--green)}.empty{padding:24px;color:var(--muted);text-align:center}.howto{margin-top:16px}.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.step{padding:18px;border-radius:14px;background:#f7faf7}.step b{display:block;color:var(--green);margin-bottom:5px}.step p{margin:0;color:var(--muted);font-size:14px}.command{margin-top:14px;padding:15px 17px;border-radius:12px;background:#10251d;color:#d8f6e9;font:14px/1.6 Consolas,"Microsoft YaHei",sans-serif}.notice{margin:34px 0;padding:20px 22px;border-left:4px solid var(--orange);background:#fff7ed;border-radius:0 14px 14px 0}.notice strong{display:block;margin-bottom:4px}.notice p{margin:0;color:#6f5a47;font-size:14px}.footer{padding:34px 0 50px;color:var(--muted);font-size:13px}
+    .research-layout{display:grid;grid-template-columns:1.05fr .95fr;gap:22px}.research-form{display:grid;gap:15px}.field label{display:block;margin-bottom:6px;font-size:14px;font-weight:800}.field small{display:block;margin-top:5px;color:var(--muted)}input,textarea{width:100%;padding:12px 13px;border:1px solid #cbd5cd;border-radius:10px;background:#fff;color:var(--ink);font:inherit;outline:none}input:focus,textarea:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(13,107,79,.12)}textarea{min-height:92px;resize:vertical}.submit{cursor:pointer;font:inherit}.submit:disabled{cursor:wait;opacity:.7}.research-state{min-height:100%;padding:20px;border-radius:14px;background:#f7faf7;border:1px solid var(--line)}.research-state h3{margin:0 0 8px}.research-state p{margin:0;color:var(--muted)}.progress{display:none;margin-top:16px;padding:12px;border-radius:10px;background:var(--mint);color:var(--green);font-weight:700}.progress.show{display:block}.result{display:none;margin-top:16px}.result.show{display:block}.result-sources{display:grid;gap:8px;margin:12px 0}.result-source{padding:11px 12px;background:white;border:1px solid var(--line);border-radius:10px}.result-source a{display:block;color:var(--green);font-size:13px;overflow-wrap:anywhere}.result-actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px}.warning-list{margin:10px 0 0;padding-left:20px;color:#8a4f20;font-size:13px}.privacy-note{margin-top:10px;color:var(--muted);font-size:12px}
+    @media(max-width:850px){.nav .optional{display:none}.hero{padding:38px 26px}.metrics{grid-template-columns:repeat(2,1fr)}.grid,.research-layout{grid-template-columns:1fr}.steps{grid-template-columns:1fr}.run{grid-template-columns:55px 1fr}.run .status{grid-column:2}.section-head{align-items:start;flex-direction:column;gap:4px}}
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <div class="topbar">
+      <a class="brand" href="/"><span class="brand-mark">智</span><span>市场情报控制台</span></a>
+      <nav class="nav">
+        <a class="button optional" href="/api/docs">接口文档</a>
+        <a class="button optional" href="http://127.0.0.1:5678" target="_blank" rel="noreferrer">n8n 自动化</a>
+        <a class="button primary" href="/reports/latest">查看最新报告</a>
+      </nav>
+    </div>
+
+    <header class="hero">
+      <p class="eyebrow">CHINA MARKET INTELLIGENCE · V{{ version }}</p>
+      <h1>从中国官网采集，形成可追溯的市场情报。</h1>
+      <p>系统按计划读取公开企业新闻，完成内容清洗、去重、证据留存、主题统计与中文报告生成。每条信息都保留原始链接，便于人工复核。</p>
+      <div class="hero-actions">
+        <a class="button" href="#research">新建市场调研</a>
+        <a class="button ghost" href="/reports/latest">打开最新报告</a>
+        <a class="button ghost" href="/api/docs">查看与测试接口</a>
+      </div>
+    </header>
+
+    <section class="metrics">
+      <div class="metric"><strong>{{ enabled_source_count }}</strong><span>正在启用的中国信源</span></div>
+      <div class="metric"><strong>{{ items|length }}</strong><span>最近展示的情报</span></div>
+      <div class="metric"><strong>{{ latest_run.stats.get('inserted_count', 0) if latest_run else 0 }}</strong><span>最近一次新增</span></div>
+      <div class="metric"><strong>{{ latest_run.stats.get('failed_count', 0) if latest_run else 0 }}</strong><span>最近一次失败信源</span></div>
+    </section>
+
+    <div class="grid">
+      <section class="panel">
+        <div class="section-head"><div><h2>采集信源</h2><p>仅启用的信源会进入自动任务</p></div></div>
+        {% for source in sources %}
+        <div class="source">
+          <span class="dot{% if not source.enabled %} off{% endif %}"></span>
+          <div><strong>{{ source.name }}</strong><small>{{ source.url }}</small><div>{% for tag in source.tags %}<span class="tag">{{ tag }}</span>{% endfor %}</div></div>
+          <span class="status{% if not source.enabled %} failed{% endif %}">{{ '启用' if source.enabled else '停用' }}</span>
+        </div>
+        {% else %}<div class="empty">尚未配置采集信源</div>{% endfor %}
+      </section>
+
+      <div>
+        <section class="panel">
+          <div class="section-head"><div><h2>最近运行</h2><p>每天 08:00 由 n8n 自动触发，也可通过接口手动运行</p></div></div>
+          {% for run in runs %}
+          <div class="run">
+            <span class="id">#{{ run.id }}</span>
+            <div><strong>{{ run.started_at|beijing_time }}</strong><small>北京时间 · 采集 {{ run.stats.get('collected_count', 0) }} · 新增 {{ run.stats.get('inserted_count', 0) }} · 失败 {{ run.stats.get('failed_count', 0) }}</small></div>
+            <span class="status {{ run.status }}">{{ {'success':'成功','partial':'部分成功','failed':'失败','running':'运行中'}.get(run.status, run.status) }}</span>
+          </div>
+          {% else %}<div class="empty">尚无运行记录</div>{% endfor %}
+        </section>
+
+        <section class="panel" style="margin-top:16px">
+          <div class="section-head"><div><h2>最近情报</h2><p>点击标题返回原始来源核验</p></div></div>
+          {% for item in items[:6] %}
+          <div class="item"><small>{{ item.source_name }} · {{ item.collected_at|beijing_time }}</small><a href="{{ item.url }}" target="_blank" rel="noreferrer"><strong>{{ item.title }}</strong></a></div>
+          {% else %}<div class="empty">运行一次流水线后，这里会显示情报</div>{% endfor %}
+        </section>
+      </div>
+    </div>
+
+    <section class="panel howto" id="research">
+      <div class="section-head"><div><h2>新建市场情报调研</h2><p>输入行业和公司，系统自动发现公开官网、加入信源、采集并生成 HTML 报告</p></div></div>
+      <div class="research-layout">
+        <form class="research-form" id="research-form">
+          <div class="field"><label for="industry">行业 *</label><input id="industry" name="industry" required minlength="2" maxlength="100" placeholder="例如：储能、新能源汽车、工业自动化"></div>
+          <div class="field"><label for="companies">相关公司 *（最多 8 家）</label><textarea id="companies" name="companies" required placeholder="例如：宁德时代、阳光电源&#10;可用逗号、顿号或换行分隔"></textarea><small>为保证准确性，请填写公司全称或常用品牌名。</small></div>
+          <div class="field"><label for="keywords">关注主题（可选，最多 10 个）</label><input id="keywords" name="keywords" placeholder="例如：新品、产能、订单、海外市场"></div>
+          <button class="button primary submit" id="research-submit" type="submit">搜索并生成报告</button>
+          <div class="privacy-note">只搜索和采集无需登录的公开网页；不绕过验证码、付费墙或网站限制。</div>
+        </form>
+        <div class="research-state" aria-live="polite">
+          <h3>一次操作完成四件事</h3>
+          <p>搜索公开官网新闻页 → 过滤无关与高风险网址 → 加入系统信源 → 采集并生成报告。</p>
+          <div class="progress" id="research-progress">正在搜索公司官网并检查网页，请稍候。采集与生成报告通常需要 1–3 分钟，请不要关闭页面。</div>
+          <div class="result" id="research-result">
+            <strong id="result-title"></strong><p id="result-stats"></p>
+            <div class="result-sources" id="result-sources"></div><ul class="warning-list" id="result-warnings"></ul>
+            <div class="result-actions"><a class="button primary" id="view-report" target="_blank" rel="noreferrer">在线浏览报告</a><a class="button" id="download-report">下载 HTML</a><a class="button" href="/">刷新控制台</a></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <aside class="notice"><strong>合规采集边界</strong><p>只处理无需登录即可访问的公开企业信息；不绕过验证码、登录、付费墙或反爬措施；不主动采集个人信息；保持低频访问，并保留来源与发布时间供复核。</p></aside>
+    <footer class="footer">市场情报自动收集与报告系统 · 中文界面 · 数据不等于结论，重要决策请回到原始来源核验</footer>
+  </div>
+  <script>
+    const form = document.getElementById('research-form');
+    const submit = document.getElementById('research-submit');
+    const progress = document.getElementById('research-progress');
+    const result = document.getElementById('research-result');
+    const splitTerms = value => value.split(/[,，、;；\n]+/).map(item => item.trim()).filter(Boolean);
+
+    form.addEventListener('submit', async event => {
+      event.preventDefault();
+      const companies = [...new Set(splitTerms(document.getElementById('companies').value))];
+      const keywords = [...new Set(splitTerms(document.getElementById('keywords').value))];
+      if (!companies.length || companies.length > 8) { alert('请填写 1–8 家公司。'); return; }
+      if (keywords.length > 10) { alert('关注主题最多填写 10 个。'); return; }
+      submit.disabled = true; submit.textContent = '正在生成…';
+      progress.classList.add('show'); result.classList.remove('show');
+      try {
+        const response = await fetch('/api/research', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({industry: document.getElementById('industry').value.trim(), companies, keywords})});
+        const data = await response.json();
+        if (!response.ok) throw new Error(typeof data.detail === 'string' ? data.detail : '输入内容不符合要求');
+        const title = document.getElementById('result-title');
+        const stats = document.getElementById('result-stats');
+        const sources = document.getElementById('result-sources');
+        const warnings = document.getElementById('result-warnings');
+        sources.replaceChildren(); warnings.replaceChildren();
+        title.textContent = data.report_url ? '报告生成完成' : '未找到可用官网信源';
+        stats.textContent = data.run ? `运行 #${data.run.run_id} · 找到 ${data.discovered_sources.length} 个信源 · 采集 ${data.run.collected_count} 条 · 失败 ${data.run.failed_count} 个` : '系统没有自动添加低可信度网址，请补充更准确的公司名称后重试。';
+        data.discovered_sources.forEach(source => {
+          const box = document.createElement('div'); box.className = 'result-source';
+          const name = document.createElement('strong'); name.textContent = `${source.company} · 可信度${source.confidence}`;
+          const link = document.createElement('a'); link.href = source.url; link.target = '_blank'; link.rel = 'noreferrer'; link.textContent = source.url;
+          box.append(name, link); sources.append(box);
+        });
+        data.warnings.forEach(message => { const item = document.createElement('li'); item.textContent = message; warnings.append(item); });
+        const view = document.getElementById('view-report'); const download = document.getElementById('download-report');
+        view.hidden = !data.report_url; download.hidden = !data.download_url;
+        if (data.report_url) view.href = data.report_url; if (data.download_url) download.href = data.download_url;
+        result.classList.add('show');
+      } catch (error) {
+        result.classList.add('show'); document.getElementById('result-title').textContent = '生成失败';
+        document.getElementById('result-stats').textContent = error.message || '请稍后重试';
+        document.getElementById('result-sources').replaceChildren(); document.getElementById('result-warnings').replaceChildren();
+        document.getElementById('view-report').hidden = true; document.getElementById('download-report').hidden = true;
+      } finally { progress.classList.remove('show'); submit.disabled = false; submit.textContent = '搜索并生成报告'; }
+    });
+  </script>
+</body>
+</html>

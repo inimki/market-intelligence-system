@@ -1,0 +1,40 @@
+# Python environments and caches
+.venv/
+.venv-collector/
+.venv-ai/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+*.egg-info/
+
+# Local tooling, downloads, and exports
+.downloads/
+.tools/
+exports/
+
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Runtime data and logs
+data/*.db
+data/raw/
+data/reports/*.html
+data/logs/
+pandasai.log
+*.log
+!data/reports/.gitkeep
+
+# IDE and operating-system files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+desktop.ini

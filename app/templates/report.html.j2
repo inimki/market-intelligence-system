@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{{ report_title }} · Run {{ run_id }}</title>
+  <style>
+    :root{--ink:#15272d;--muted:#637277;--paper:#f4f1e8;--line:#d7d0c2;--navy:#0b303a;--teal:#108c8d;--orange:#c7653a}
+    *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:"Microsoft YaHei","PingFang SC",system-ui,sans-serif;line-height:1.75}
+    header{padding:70px 6vw;background:linear-gradient(145deg,#082832,#15515a);color:white}header small{color:#78ded5;letter-spacing:.12em}h1{margin:16px 0 8px;font-size:clamp(36px,6vw,70px);line-height:1.08}header p{color:#c6d7da}
+    main{max-width:1280px;margin:auto;padding:55px 5vw}.metrics{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);background:#fff}.metric{padding:25px;border-right:1px solid var(--line)}.metric:last-child{border:0}.metric strong{display:block;color:var(--teal);font-size:38px}.metric span{color:var(--muted)}
+    section{margin-top:55px}h2{font-size:30px}.highlights{display:grid;gap:12px}.highlight{padding:18px 20px;border-left:4px solid var(--teal);background:#e3eee9}
+    .bars{display:grid;gap:10px}.bar{display:grid;grid-template-columns:180px 1fr 40px;align-items:center;gap:12px}.track{height:12px;background:#ddd7ca}.fill{height:100%;background:var(--teal)}
+    .keywords{display:flex;flex-wrap:wrap;gap:8px}.keywords span{padding:7px 11px;border-radius:99px;background:#dceae6;color:#285b5a}
+    article{margin:15px 0;padding:24px;border:1px solid var(--line);background:#fff}article h3{margin:0 0 8px;font-size:21px}article .meta{color:var(--muted);font-size:13px}article .summary{color:#405258}.evidence{padding:14px 18px;background:#f2e5d8;color:#685445;font-size:13px}.evidence strong{display:block;margin-bottom:5px}.evidence ul{margin:0;padding-left:20px}.evidence li+li{margin-top:5px}article a{color:var(--teal)}
+    footer{margin-top:60px;padding-top:25px;border-top:1px solid var(--line);color:var(--muted);font-size:12px}
+    @media(max-width:700px){header{padding:50px 20px}main{padding:35px 20px}.metrics{grid-template-columns:1fr}.metric{border-right:0;border-bottom:1px solid var(--line)}.bar{grid-template-columns:100px 1fr 30px}}
+  </style>
+</head>
+<body>
+  <header>
+    <small>中国市场情报 / 第 {{ run_id }} 次运行</small>
+    <h1>{{ report_title }}</h1>
+    <p>生成时间：{{ generated_at.strftime('%Y-%m-%d %H:%M:%S') }}（北京时间） · 所有结论均保留原始来源链接</p>
+    {% if report_scope %}<p>行业：{{ report_scope.industry }} · 公司：{{ report_scope.companies|join('、') }}{% if report_scope.keywords %} · 关注：{{ report_scope.keywords|join('、') }}{% endif %}</p>{% endif %}
+  </header>
+  <main>
+    <div class="metrics">
+      <div class="metric"><strong>{{ analysis.total_items }}</strong><span>本次去重后情报</span></div>
+      <div class="metric"><strong>{{ analysis.source_count }}</strong><span>信源数量</span></div>
+      <div class="metric"><strong>{{ analysis.top_keywords|length }}</strong><span>识别主题</span></div>
+    </div>
+
+    <section>
+      <h2>本期摘要</h2>
+      <div class="highlights">{% for text in analysis.highlights %}<div class="highlight">{{ text }}</div>{% endfor %}</div>
+    </section>
+
+    <section>
+      <h2>信源分布</h2>
+      <div class="bars">
+        {% set maximum = analysis.items_by_source[0].count if analysis.items_by_source else 1 %}
+        {% for row in analysis.items_by_source %}
+        <div class="bar"><span>{{ row.source }}</span><div class="track"><div class="fill" style="width:{{ (row.count / maximum * 100)|round }}%"></div></div><b>{{ row.count }}</b></div>
+        {% endfor %}
+      </div>
+    </section>
+
+    <section>
+      <h2>高频主题</h2>
+      <div class="keywords">{% for row in analysis.top_keywords %}<span>{{ row.keyword }} · {{ row.count }}</span>{% endfor %}</div>
+    </section>
+
+    <section>
+      <h2>情报明细与证据</h2>
+      {% for item in items %}
+      <article>
+        <div class="meta">{{ item.source_name }} · {{ (item.published_at or item.collected_at)|beijing_time }}（北京时间）</div>
+        <h3>{{ item.title }}</h3>
+        <p class="summary">{{ item.summary }}</p>
+        {% if item.evidence %}<div class="evidence"><strong>原文证据摘录</strong><ul>{% for evidence in item.evidence %}<li>{{ evidence }}</li>{% endfor %}</ul></div>{% endif %}
+        <a href="{{ item.url }}" rel="noreferrer">打开原始来源 ↗</a>
+      </article>
+      {% endfor %}
+    </section>
+    <footer>该报告由确定性 Python 指标生成；PandasAI 仅用于可选的探索性分析，不替代可复算指标。系统只采集公开页面，不绕过登录、验证码、付费墙或反爬措施；重要结论请打开原始来源复核。</footer>
+  </main>
+</body>
+</html>

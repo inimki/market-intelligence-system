@@ -1,0 +1,30 @@
+[
+  {
+    "url": "https://demo.example.com/competitor-a/product-launch?utm_source=newsletter",
+    "title": "竞争对手A发布新一代工业控制产品",
+    "content": "竞争对手A宣布推出新一代工业控制产品。新产品强调能耗监测、预测性维护和边缘计算能力，并计划在华东地区首先开展渠道合作。公司同时表示将在未来三个月提供试点项目。",
+    "published_at": "2026-08-27T09:00:00+08:00",
+    "author": "竞争对手A新闻中心"
+  },
+  {
+    "url": "https://demo.example.com/industry/report-automation",
+    "title": "制造企业加快部署自动化与AI分析",
+    "content": "行业调研显示，制造企业正在增加自动化办公、设备数据分析和AI报告生成投入。受访企业最关注数据质量、系统集成成本和生成内容的可追溯性。",
+    "published_at": "2026-08-28T14:30:00+08:00",
+    "author": "行业观察"
+  },
+  {
+    "url": "https://demo.example.com/competitor-b/channel-plan",
+    "title": "竞争对手B扩大华南渠道覆盖",
+    "content": "竞争对手B公布华南渠道计划，将新增佛山、东莞和深圳三地合作伙伴。计划重点覆盖新能源、数据中心和智能制造客户，并配套新的技术培训课程。",
+    "published_at": "2026-08-29T11:20:00+08:00",
+    "author": "竞争对手B市场部"
+  },
+  {
+    "url": "https://demo.example.com/competitor-a/product-launch?from=homepage",
+    "title": "竞争对手A发布新一代工业控制产品",
+    "content": "竞争对手A宣布推出新一代工业控制产品。新产品强调能耗监测、预测性维护和边缘计算能力，并计划在华东地区首先开展渠道合作。公司同时表示将在未来三个月提供试点项目。",
+    "published_at": "2026-08-27T09:00:00+08:00",
+    "author": "竞争对手A新闻中心"
+  }
+]

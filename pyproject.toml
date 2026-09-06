@@ -1,0 +1,54 @@
+[build-system]
+requires = ["setuptools>=75", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "market-intelligence-system"
+version = "0.1.0"
+description = "Crawl4AI + Browser Use + n8n + PandasAI market intelligence pipeline"
+readme = "README.md"
+requires-python = ">=3.11,<3.12"
+dependencies = [
+  "fastapi>=0.115,<1",
+  "uvicorn[standard]>=0.30,<1",
+  "pydantic>=2.8,<3",
+  "pydantic-settings>=2.4,<3",
+  "sqlalchemy>=2.0,<3",
+  "psycopg[binary]>=3.2,<4",
+  "pandas>=2.2,<3",
+  "jinja2>=3.1,<4",
+  "python-dateutil>=2.9,<3",
+  "httpx>=0.27,<1",
+  "jieba>=0.42,<1",
+]
+
+[project.optional-dependencies]
+collectors = [
+  "crawl4ai>=0.9,<1",
+  "browser-use>=0.8,<1",
+]
+ai = [
+  "pandasai>=3,<4",
+  "pandasai-litellm>=0.0.1",
+]
+dev = [
+  "pytest>=8,<9",
+  "ruff>=0.9,<1",
+]
+
+[project.scripts]
+market-intel = "app.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["app*"]
+
+[tool.setuptools.package-data]
+app = ["templates/*.j2"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
