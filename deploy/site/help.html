@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>开始使用 · 市场情报平台</title>
+<style>
+:root{--ink:#17372e;--muted:#5c736b;--green:#11684e;--bg:#f4f7f2}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.8 "Microsoft YaHei",system-ui,sans-serif}
+main{max-width:1120px;margin:auto;padding:28px}nav{display:flex;justify-content:space-between;align-items:center;gap:20px}a{color:var(--green)}.button{display:inline-block;padding:11px 20px;background:var(--green);border-radius:9px;color:#fff;text-decoration:none}header{padding:64px 0 36px;border-bottom:1px solid #ccd8ce}header small{letter-spacing:3px;color:var(--green)}h1{font-size:46px;line-height:1.3;margin:14px 0}header p{max-width:750px;color:var(--muted);font-size:19px}.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin:30px 0}.card,section{background:#fff;padding:26px;border:1px solid #dde4dc;border-radius:16px}.num{font-size:30px;color:var(--green);font-weight:800}h2{font-size:23px;margin:10px 0}p{color:var(--muted)}section{margin-bottom:18px}code{background:#eaf1e9;border-radius:5px;padding:3px 6px;overflow-wrap:anywhere}.foot{font-size:14px;color:var(--muted);padding:25px 0}@media(max-width:760px){.cards{grid-template-columns:1fr}h1{font-size:34px}main{padding:20px}}
+</style></head>
+<body><main>
+<nav><a href="/">← 返回市场情报控制台</a><a href="/guide.txt" download="使用说明.txt">下载 TXT 使用说明</a></nav>
+<header><small>GET STARTED / 使用指南</small><h1>让第一份调研报告，<br>从一个问题开始。</h1><p>填写行业和公司，查找公开官网信息，生成保留来源链接的中文报告。日常操作在浏览器完成，按需开启 AI 问答。</p><a class="button" href="/#research">新建市场调研 →</a></header>
+<div class="cards">
+<article class="card"><span class="num">01</span><h2>确定调研范围</h2><p>行业填“储能”，公司填“宁德时代、阳光电源”，关注主题填“新品、产能、订单”。最多可填写 8 家公司。</p></article>
+<article class="card"><span class="num">02</span><h2>提交并等待采集</h2><p>点击“搜索并生成报告”。系统发现候选官网、采集公开内容并去重。网络或网站限制可能导致部分信源失败。</p></article>
+<article class="card"><span class="num">03</span><h2>浏览、下载与核验</h2><p>点击“在线浏览报告”或“下载 HTML”。沿报告中的原始链接核验重要信息。首次运行前暂无最新报告。</p></article>
+</div>
+<section><h2>需要自动定时运行？</h2><p>打开 <a href="http://127.0.0.1:5678/" target="_blank" rel="noreferrer">n8n 管理页面</a>，首次创建自己的管理账号。一键脚本会导入并发布“市场情报自动收集与报告”工作流，每天北京时间 08:00 执行。你的电脑和 Docker 必须保持运行。它会读取所有已启用信源。</p></section>
+<section><h2>AI 是可选项</h2><p>普通网页采集和统计报告可以不填 Key。要启用 PandasAI 问答或 Browser Use 交互采集，请在本机 <code>.env</code> 中配置服务商、Key、接口地址和模型，再次双击一键部署。详细的 DeepSeek / OpenAI / 兼容服务示例在 <a href="/guide.txt">TXT 说明第 6 节</a>。</p></section>
+<section><h2>日常启动和排错</h2><p>下载代码后，在已装好 Docker Desktop 的 Windows 上双击 <code>一键部署.cmd</code>。再次双击可更新并启动；停止服务执行 <code>docker compose stop</code>。网页出错时查看 <code>docker compose logs --tail 80 nginx api</code>。</p><p><a href="/api/docs">打开 API 操作页</a> · <a href="/reports/latest">打开最新报告</a> · <a href="https://github.com/inimki/market-intelligence-system" target="_blank" rel="noreferrer">GitHub 项目</a></p></section>
+<p class="foot">市场情报平台 · 本地部署 · 请按网站允许的范围采集，重要结论需人工核验。</p>
+</main></body></html>

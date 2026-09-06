@@ -1,304 +1,108 @@
-市场情报自动收集与报告系统——安装与使用说明
-重要说明
-========
+市场情报平台：从下载到运行（Windows 一键部署版）
 
-下载项目代码后不能直接使用完整平台。第一次运行前必须先安装 Docker Desktop、
-启用 WSL 2，并创建本机专用的 .env 配置文件。
+1. 先准备一次环境
+安装并启动 Docker Desktop，选择 Linux 容器 / WSL 2 后端。
+官方安装说明：https://docs.docker.com/desktop/setup/install/windows-install/
+如果要求启用虚拟化、安装 WSL 或重启 Windows，请先完成。
+建议 4 核 CPU、16 GB 内存、15 GB 以上空闲磁盘。
+使用 Docker 时不需要另外安装 Python、Nginx、PostgreSQL 或 Node.js。
+确认 Docker Desktop 显示 Engine running。
 
-推荐使用下面的“Docker 部署方式”。使用 Docker 时不需要在 Windows 中单独安装
-Python、PostgreSQL、Crawl4AI、Browser Use、PandasAI 或 n8n，这些依赖会被安装在
-相互隔离的容器中。
-
-
-一、这个系统能做什么
-====================
-
-1. 输入要调研的行业、公司和关注主题。
-2. 自动发现和采集允许公开访问的网站。
-3. 对正文、URL、发布时间等数据进行标准化和去重。
-4. 使用 Pandas 计算可复查的统计结果。
-5. 生成可在线浏览和下载的中文 HTML 市场情报报告。
-6. 使用 n8n 定时执行任务。
-7. 配置 AI Key 后，可使用 Browser Use 处理需要点击的页面，并使用 PandasAI
-   对已采集数据进行自然语言问答。
-
-
-二、运行环境要求
-================
-
-必需环境（Windows 推荐配置）：
-
-1. 64 位 Windows 10 22H2 或 Windows 11。
-2. BIOS/UEFI 中已开启 CPU 虚拟化。
-3. WSL 2 已安装并能正常运行。
-4. Docker Desktop 已安装，使用 Linux Containers 和 WSL 2 后端。
-5. Docker Compose V2（Docker Desktop 已自带）。
-6. 可正常访问 Docker 镜像和 Python 软件源的网络。
-7. 端口 8000 和 5678未被其他程序占用。
-
-建议硬件：
-
-- CPU：4 核或以上。
-- 内存：至少 8 GB，建议 16 GB。
-- 可用磁盘：至少 15 GB。
-
-Git 不是运行系统的必需条件；使用 git clone 下载时才需要。也可以在 GitHub 页面
-选择 Code -> Download ZIP，解压后运行。
-
-
-三、下载项目
-============
-
-方法一：使用 Git（推荐）
-
+2. 下载并解压
+项目：https://github.com/inimki/market-intelligence-system
+点击 Code → Download ZIP，解压到普通文件夹，不要在压缩包中运行。
+若已安装 Git，也可执行：
 git clone https://github.com/inimki/market-intelligence-system.git
-cd market-intelligence-system
 
-方法二：下载 ZIP
+3. 双击“一键部署.cmd”
+首次会自动生成 .env、数据库随机密码与 n8n 随机加密密钥。
+自动下载镜像、安装组件、启动六个服务、添加示例信源、导入和发布 n8n 工作流。
+第一次构建需要网络，可能持续十几分钟或更久；请等待日志显示 Ready。
+完成后自动打开网页。失败时窗口会显示具体原因。
+无需手动复制 .env，也无需先申请 AI Key。
+已有 .env 会保留，脚本不会更换你之前保存的 Key 或数据库密码。
 
-1. 打开 https://github.com/inimki/market-intelligence-system
-2. 点击 Code -> Download ZIP。
-3. 解压 market-intelligence-system-main.zip。
-4. 在解压后的项目文件夹空白处按住 Shift 并单击鼠标右键，打开 PowerShell。
+4. 打开平台
+平台首页：http://127.0.0.1:8080/
+浏览器图文指南：http://127.0.0.1:8080/help
+API 操作页：http://127.0.0.1:8080/api/docs
+最新报告：http://127.0.0.1:8080/reports/latest
+n8n 管理页：http://127.0.0.1:5678/
+第一次进入 n8n，需要自行创建管理账号。未生成报告时最新报告链接暂时不可用。
+Nginx 提供网页统一入口，实际采集和报告功能由 Python 应用完成。
 
+5. 生成报告
+打开首页，点击“新建市场调研”。
+行业示例：储能。
+公司示例：宁德时代、阳光电源（最多 8 家）。
+关注主题示例：新品、产能、订单。
+点击“搜索并生成报告”，等待完成后在线浏览或下载 HTML。
+普通公开网页采集和统计报告不要求 AI Key。
+搜索或采集受网络、网页结构及网站访问许可影响，必要时手动添加官方信源。
 
-四、检查 Docker 和 WSL
-======================
+6. 可选：配置 DeepSeek、OpenAI 或其他 AI 服务
+用记事本打开项目根目录的 .env，找到并修改原来的四项；不要重复添加多套配置。
 
-先启动 Docker Desktop，等待左下角显示 Engine running，然后在项目目录执行：
-
-wsl --status
-docker --version
-docker compose version
-docker info
-
-如果 docker info 报错，请先解决 Docker Desktop 或虚拟化问题，不要继续启动系统。
-
-
-五、创建 .env 配置文件
-======================
-
-在项目根目录执行：
-
-Copy-Item .env.example .env
-
-然后用记事本打开 .env：
-
-notepad .env
-
-必须修改下面两项，不能继续使用示例值：
-
-N8N_ENCRYPTION_KEY=至少32位的随机字符串
-POSTGRES_PASSWORD=你自己设置的数据库强密码
-
-可以用下面的 PowerShell 命令生成随机字符串。命令只会输出随机值，不会上传：
-
-$b = New-Object byte[] 32; [Security.Cryptography.RandomNumberGenerator]::Create().GetBytes($b); [Convert]::ToBase64String($b)
-
-将输出结果分别复制到 N8N_ENCRYPTION_KEY 和 POSTGRES_PASSWORD。两个值最好不要相同。
-
-安全提醒：
-
-- .env 只保存在自己的电脑中。
-- 不要把 .env、API Key、数据库密码提交到 GitHub。
-- 不要在聊天记录、截图或公开文档中展示完整 Key。
-
-
-六、选择 AI 服务商
-==================
-
-AI Key 不是生成基础报告的必需条件。没有 Key 时仍可使用 Crawl4AI 采集普通公开网页、
-去重、统计和生成 HTML 报告。
-
-以下功能需要 AI Key：
-
-- Browser Use 交互网页采集。
-- PandasAI 自然语言问答。
-
-方案 A：DeepSeek（本项目默认配置）
-
+DeepSeek：
 AI_PROVIDER=deepseek
 AI_API_KEY=你的DeepSeek_Key
 AI_BASE_URL=https://api.deepseek.com
 AI_MODEL=deepseek-v4-flash
 
-方案 B：OpenAI
-
+OpenAI：
 AI_PROVIDER=openai
-AI_API_KEY=你的OpenAI_API_Key
+AI_API_KEY=你的OpenAI_Key
 AI_BASE_URL=https://api.openai.com/v1
-AI_MODEL=填写你的账户当前可用的模型ID
+AI_MODEL=你账户当前可用的模型ID
 
-方案 C：其他提供 OpenAI 兼容接口的服务
-
+其他 OpenAI 兼容服务：
 AI_PROVIDER=openai
-AI_API_KEY=该服务商提供的Key
-AI_BASE_URL=该服务商提供的OpenAI兼容接口地址
-AI_MODEL=该服务商提供的模型ID
-
-不同服务商的模型名称和接口地址会变化，请以服务商控制台和官方文档为准。
-并非所有“兼容接口”都完整支持工具调用；Browser Use 不能正常运行时，可以改用：
-
-BROWSER_USE_API_KEY=你的Browser_Use_Cloud_Key
-
-只使用旧版 OPENAI_API_KEY 的安装仍可兼容，但新安装建议统一使用上面的 AI_* 配置。
-修改 .env 后必须重启容器：
-
-docker compose restart collector analysis
-
-
-七、运行环境检查
-================
-
-在项目根目录执行：
-
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\检查运行环境.ps1
-
-检查内容包括：Docker、Docker Compose、WSL 2、内存、磁盘、端口、.env、密码占位符
-和 AI 配置。脚本不会显示或上传任何 Key、密码内容。
-
-出现“必需环境检查通过”后再继续。
-
-
-八、第一次启动完整平台
-======================
-
-在项目根目录执行：
-
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\finish-docker-n8n.ps1
-
-也可以右键 scripts\finish-docker-n8n.ps1，选择“使用 PowerShell 运行”。
-
-第一次执行会：
-
-1. 检查并启动 Docker Desktop。
-2. 构建 API、Collector 和 Analysis 三个项目镜像。
-3. 下载并启动 PostgreSQL 与 n8n。
-4. 创建数据库和持久化数据卷。
-5. 加入三个公开官网示例信源。
-6. 导入并发布 n8n 定时工作流。
-
-首次构建需要下载浏览器和依赖，可能需要 10～30 分钟，取决于网络速度。不要在构建
-过程中关闭 Docker Desktop 或 PowerShell。
-
-
-九、确认五个服务都正常
-======================
-
-执行：
-
-docker compose ps
-
-应该看到下面五个服务处于 Up 或 running 状态：
-
-- postgres
-- api
-- collector
-- analysis
-- n8n
-
-然后打开：
-
-- 中文控制台：http://127.0.0.1:8000/
-- API 文档：http://127.0.0.1:8000/api/docs
-- n8n 自动化：http://127.0.0.1:5678
-- 最新报告：http://127.0.0.1:8000/reports/latest
-
-第一次进入 n8n 会要求创建本机管理员账号。账号密码由使用者自己设置，不要提交到 Git。
-
-
-十、生成第一份市场情报报告
-==========================
-
-1. 打开 http://127.0.0.1:8000/
-2. 找到“新建智能调研”。
-3. 输入行业，例如“储能”。
-4. 输入 1～8 家公司，例如“宁德时代、阳光电源”。
-5. 可选输入关注主题，例如“新品、产能、订单”。
-6. 提交并等待采集完成。
-7. 点击“在线浏览报告”或“下载 HTML”。
-
-也可以进入 n8n，打开“市场情报自动收集与报告”，手动执行工作流。
-
-
-十一、以后如何启动和停止
-========================
-
-启动并保留原来的数据：
-
-docker compose start
-
-停止但保留数据：
-
-docker compose stop
-
-查看运行状态：
-
-docker compose ps
-
-查看错误日志：
-
-docker compose logs --tail 120 api
-docker compose logs --tail 120 collector
-docker compose logs --tail 120 analysis
-docker compose logs --tail 120 n8n
-
-不要随意执行 docker compose down -v。“-v”会删除数据库、n8n 配置和报告数据卷。
-
-
-十二、更新 GitHub 代码
-====================
-
-如果是使用 Git 下载的：
-
-git pull
-docker compose up -d --build
-
-更新前建议备份重要数据库和报告。不要用新的 .env 覆盖自己原来的 .env。
-
-
-十三、仅开发者使用的本地 Python 方式
-==================================
-
-Docker 用户不需要执行这一节。
-
-本地开发严格要求 Python 3.11。由于 Browser Use 和 PandasAI 的 Pillow 依赖存在冲突，
-项目需要分别创建 .venv、.venv-collector 和 .venv-ai 三个虚拟环境。详细命令请阅读
-README.md 的“本地开发”部分。初次体验完整平台时优先使用 Docker。
-
-
-十四、常见故障
-==============
-
-1. Docker 显示 Virtualization support not detected
-   进入 BIOS/UEFI 开启 Intel VT-x 或 AMD-V，并确认 Windows 的虚拟机平台和 WSL 2 已启用。
-
-2. docker info 连接失败
-   打开 Docker Desktop，等待 Engine running；仍失败时重启 Windows。
-
-3. 8000 或 5678 端口被占用
-   关闭占用端口的旧服务，再重新执行 docker compose up -d。
-
-4. AI 问答提示 AI_API_KEY is not configured
-   检查 .env 中 AI_API_KEY 是否填写，保存后执行 docker compose restart collector analysis。
-
-5. 普通网页能抓取，但 Browser Use 失败
-   检查模型是否支持工具调用；也可以配置 BROWSER_USE_API_KEY。
-
-6. 页面打不开
-   先执行 docker compose ps，再执行对应服务的 docker compose logs 命令查看原因。
-
-
-十五、隐私与合法使用
-==================
-
-只采集允许公开访问且允许自动访问的页面。遵守 robots.txt、网站服务条款、版权和个人
-信息保护要求，不绕过验证码、登录限制、付费墙或访问控制，不采集或传播敏感个人信息。
-
-公开部署前请阅读：
-
-- PRIVACY_AND_COMPLIANCE.md
-- SECURITY.md
-- THIRD_PARTY_NOTICES.md
-
-项目地址：https://github.com/inimki/market-intelligence-system
+AI_API_KEY=该服务商的Key
+AI_BASE_URL=服务商文档提供的兼容接口地址
+AI_MODEL=服务商支持的模型ID
+
+模型要支持所用的工具调用/结构化输出，并非每家兼容接口都已经测试。
+模型名称及权限以各家官方控制台为准。
+可另外填写 BROWSER_USE_API_KEY，给 Browser Use 使用独立云服务。
+没有任何 AI Key 时，Browser Use 交互采集和 PandasAI 问答不可用，基础报告仍可用。
+
+保存后再次双击“一键部署.cmd”，或在项目目录的 PowerShell 执行：
+docker compose up -d collector analysis
+注意：仅 restart 不会更新容器环境变量。
+
+本机 .env 不会上传 GitHub，也不提供作者的 Key。使用者自行承担模型 API 费用。
+不要把 Key、.env 或数据库密码放入截图、公开聊天或 Git 仓库。
+
+7. 日常使用
+启动：再次双击“一键部署.cmd”，会检查并启动服务。
+停止但保留数据：docker compose stop
+启动已有容器：docker compose start
+查看状态：docker compose ps
+应看到 nginx、postgres、api、collector、analysis、n8n 六个服务正常运行。
+API 的 8000 端口保留用于本地调试；日常通过 Nginx 的 8080 端口使用。
+
+8. 更新
+通过 Git 下载：先备份数据，执行 git pull，然后双击“一键部署.cmd”。
+通过 ZIP 下载：将新版代码放回原项目目录，保留原 .env 和目录名，再次部署。
+首次安装后不要随意更改 POSTGRES_PASSWORD 和 N8N_ENCRYPTION_KEY。
+不要执行 docker compose down -v，-v 会删除数据库与报告等数据卷。
+Docker Desktop 必须保持运行；没有本机环境就不能使用 127.0.0.1 地址。
+
+9. 排错
+Docker 未找到：安装 Docker Desktop，重新打开终端或重启电脑后再运行。
+虚拟化未启用：按电脑厂商说明在 BIOS/UEFI 开启虚拟化，完成 WSL 2 配置。
+镜像或依赖下载失败：检查网络与镜像源可达性，修复后再次双击。
+8080 占用：在 .env 添加 WEB_PORT=8081，再次双击，改用 http://127.0.0.1:8081。
+8000/5678 占用：关闭占用程序；不要同时启动旧版 Python 本地服务。
+网页 502：执行 docker compose logs --tail 80 nginx api。
+AI 报错：检查 Key、余额、接口地址与模型权限，然后重新创建 collector/analysis 容器。
+没有调研结果：检查目标网页是否可达，换公司全称或手动添加允许采集的官网信源。
+密钥配置检查可运行 scripts 中的“检查运行环境.ps1”；英文 PASS 为通过，WARN 为提醒。
+
+10. 适用范围
+一键入口已针对 Windows Docker Desktop 设计；Linux/macOS 手动路线见 README。
+默认只向本机开放网页，Nginx 不会自动让网站上线互联网。
+公开上线需要另配域名、HTTPS、登录认证和备份。
+只采集允许访问的内容，遵守网站规则，不绕过验证码、付费墙或访问控制。
+项目的原创代码采用 MIT；第三方组件各自保留许可证，n8n 有单独的使用条款。
+详见 THIRD_PARTY_NOTICES.md、PRIVACY_AND_COMPLIANCE.md 和 SECURITY.md。

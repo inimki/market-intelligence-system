@@ -5,8 +5,9 @@ ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PIP_NO_CACHE_DIR=1 \
     PIP_DEFAULT_TIMEOUT=120 PIP_RETRIES=10
 WORKDIR /app
 COPY pyproject.toml README.md ./
-COPY app ./app
+COPY app/__init__.py ./app/__init__.py
 RUN pip install --upgrade pip && pip install -e ".[ai]"
+COPY app ./app
 RUN useradd --create-home --uid 10001 analyst && chown -R analyst:analyst /app
 USER analyst
 EXPOSE 8012

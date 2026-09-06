@@ -9,7 +9,7 @@
 1. Windows 已启用虚拟化。
 2. WSL 2 可运行，`wsl --version` 能显示版本。
 3. Docker Desktop 已启动，左下角显示 Engine running。
-4. 项目根目录有 `.env`，并填写 `AI_API_KEY`。
+4. 新版双击根目录 `一键部署.cmd` 会自动创建 `.env`；`AI_API_KEY` 是可选项。
 5. Docker 至少分配约 4 GB 内存，磁盘保留约 10 GB 空间。
 
 验证命令：

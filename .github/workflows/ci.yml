@@ -8,6 +8,14 @@ permissions:
   contents: read
 
 jobs:
+  bootstrap:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify Windows first-run configuration
+        shell: powershell
+        run: ./tests/test-bootstrap.ps1
+
   test:
     runs-on: ubuntu-latest
     steps:

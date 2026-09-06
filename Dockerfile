@@ -6,9 +6,10 @@ ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PIP_NO_CACHE_DIR=1 \
 WORKDIR /app
 
 COPY pyproject.toml README.md ./
-COPY app ./app
+COPY app/__init__.py ./app/__init__.py
 COPY data/demo_documents.json ./data/demo_documents.json
 RUN pip install --upgrade pip && pip install -e .
+COPY app ./app
 RUN useradd --create-home --uid 10001 appuser \
     && mkdir -p /app/data/reports /app/data/raw \
     && chown -R appuser:appuser /app

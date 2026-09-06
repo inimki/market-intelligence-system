@@ -7,11 +7,12 @@ ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PIP_NO_CACHE_DIR=1 \
     PLAYWRIGHT_DOWNLOAD_CONNECTION_TIMEOUT=120000
 WORKDIR /app
 COPY pyproject.toml README.md ./
-COPY app ./app
+COPY app/__init__.py ./app/__init__.py
 COPY data/demo_documents.json ./data/demo_documents.json
 RUN pip install --upgrade pip \
     && pip install -e ".[collectors]" \
     && python -m playwright install --with-deps chromium
+COPY app ./app
 RUN useradd --create-home --uid 10001 collector \
     && chown -R collector:collector /app /ms-playwright
 USER collector

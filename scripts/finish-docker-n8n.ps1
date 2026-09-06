@@ -70,7 +70,7 @@ if (Test-Path -LiteralPath $StopScript) {
 }
 
 Write-Host "[3/6] Starting PostgreSQL, API services, and n8n (missing images are built automatically)..."
-& $DockerExe compose --project-directory $ProjectDir -f $ComposeFile up -d
+& $DockerExe compose --progress plain --project-directory $ProjectDir -f $ComposeFile up -d --build --wait --wait-timeout 300
 if ($LASTEXITCODE -ne 0) {
     throw "docker compose up failed."
 }
@@ -121,7 +121,7 @@ if ($Sources.Count -eq 0) {
     )
     foreach ($Source in $DefaultSources) {
         $Body = $Source | ConvertTo-Json -Depth 4 -Compress
-        Invoke-RestMethod -Method Post -Uri "http://127.0.0.1:8000/api/sources" -ContentType "application/json" -Body $Body -TimeoutSec 30 | Out-Null
+        Invoke-RestMethod -Method Post -Uri "http://127.0.0.1:8000/api/sources" -ContentType "application/json; charset=utf-8" -Body ([Text.Encoding]::UTF8.GetBytes($Body)) -TimeoutSec 30 | Out-Null
     }
 }
 
@@ -131,7 +131,7 @@ $WorkflowExportExitCode = $LASTEXITCODE
 if ($WorkflowExportExitCode -ne 0 -and $ExistingWorkflows -notmatch "No workflows found") {
     throw "Unable to inspect existing n8n workflows."
 }
-if ($ExistingWorkflows -notmatch [regex]::Escape($WorkflowName)) {
+if ($ExistingWorkflows -notmatch [regex]::Escape($WorkflowId)) {
     & $DockerExe compose --project-directory $ProjectDir -f $ComposeFile exec -T n8n n8n import:workflow --input=/files/workflows/market-intelligence.json
     if ($LASTEXITCODE -ne 0) {
         throw "n8n workflow import failed."

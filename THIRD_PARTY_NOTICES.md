@@ -37,7 +37,13 @@ Required attribution:
   Its license limits some commercial distribution and hosted-service uses. This
   repository references the official n8n container and does not relicense n8n.
 
-## Other dependencies
+## Nginx
+
+- Project: https://nginx.org/
+- License: 2-clause BSD-style license; see https://nginx.org/LICENSE
+- This repository references the official Nginx container and includes its own proxy configuration.
+
+## Additional dependencies
 
 Python packages, container images, PostgreSQL, Playwright/Chromium, DeepSeek or
 other model APIs, and their transitive dependencies remain under their own

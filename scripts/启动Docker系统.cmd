@@ -1,7 +1,11 @@
 @echo off
 chcp 65001 >nul
 cd /d "%~dp0.."
-docker compose up -d
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0deploy.ps1"
+if errorlevel 1 (
+  pause
+  exit /b 1
+)
 docker compose ps
 echo.
 echo 系统启动完成：
