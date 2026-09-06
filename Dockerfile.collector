@@ -1,4 +1,7 @@
-FROM public.ecr.aws/docker/library/python:3.11-slim
+ARG COLLECTOR_BASE_IMAGE=public.ecr.aws/docker/library/python:3.11-slim
+FROM ${COLLECTOR_BASE_IMAGE}
+
+USER root
 
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PIP_NO_CACHE_DIR=1 \
     PIP_INDEX_URL=https://mirrors.aliyun.com/pypi/simple/ \
@@ -9,11 +12,18 @@ WORKDIR /app
 COPY pyproject.toml README.md ./
 COPY app/__init__.py ./app/__init__.py
 COPY data/demo_documents.json ./data/demo_documents.json
-RUN pip install --upgrade pip \
-    && pip install -e ".[collectors]" \
-    && python -m playwright install --with-deps chromium
+RUN --mount=type=cache,target=/root/.cache/pip \
+    PIP_NO_CACHE_DIR=false pip install "setuptools>=75" wheel \
+    && PIP_NO_CACHE_DIR=false pip install --no-build-isolation -e ".[collectors]"
+# Keep package installation cached when OS/browser downloads need a retry.
+RUN if python -c "from pathlib import Path; from playwright.sync_api import sync_playwright; p=sync_playwright().start(); assert Path(p.chromium.executable_path).exists(); p.stop()"; then \
+      echo "Reusing installed Chromium"; \
+    else \
+      python -m playwright install-deps chromium; \
+    fi
+RUN python -m playwright install chromium
 COPY app ./app
-RUN useradd --create-home --uid 10001 collector \
+RUN (id collector >/dev/null 2>&1 || useradd --create-home --uid 10001 collector) \
     && chown -R collector:collector /app /ms-playwright
 USER collector
 EXPOSE 8011

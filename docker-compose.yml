@@ -64,6 +64,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.collector
+      args:
+        COLLECTOR_BASE_IMAGE: ${COLLECTOR_BASE_IMAGE:-public.ecr.aws/docker/library/python:3.11-slim}
     restart: unless-stopped
     shm_size: 2gb
     environment:
