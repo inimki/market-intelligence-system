@@ -5,13 +5,49 @@
 
 这是一个可运行的学习型完整项目，把 **Crawl4AI + Browser Use + n8n + PandasAI + Python** 组合成一条可追溯的市场情报流水线。
 
+> **下载代码后不能直接运行完整平台。** 首次使用必须先安装 Docker Desktop、启用
+> WSL 2、复制 `.env.example` 为 `.env` 并设置数据库密码和 n8n 加密密钥。请先打开
+> 仓库根目录的 [`使用说明.txt`](使用说明.txt)，按“环境检查 → 配置 → 首次启动”顺序操作。
+
 本仓库的原创应用代码采用 MIT License。第三方组件保留各自许可证；其中 n8n 使用
 Sustainable Use License，不属于 OSI 定义的传统开源许可证。详情见
 [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md)。
 
 如果你想边运行边理解，请直接阅读：[`docs/一步一步理解系统.md`](docs/一步一步理解系统.md)。
 
-如果你只想先把系统用起来，请阅读：[`先看这里-操作步骤.md`](先看这里-操作步骤.md)，也可以双击 `scripts/启动系统.cmd` 一键启动三个本地服务。
+如果你只想先把系统用起来，请阅读可直接用记事本打开的
+[`使用说明.txt`](使用说明.txt)。`先看这里-操作步骤.md` 保留为 GitHub 在线速查版。
+
+## 下载后的推荐安装顺序（Windows + Docker）
+
+运行环境：64 位 Windows 10/11、WSL 2、Docker Desktop、Docker Compose V2；建议
+4 核 CPU、8 GB 以上内存和 15 GB 可用磁盘。Docker 部署不要求在 Windows 单独安装
+Python、PostgreSQL、Crawl4AI、Browser Use、PandasAI 或 n8n。
+
+```powershell
+git clone https://github.com/inimki/market-intelligence-system.git
+cd market-intelligence-system
+Copy-Item .env.example .env
+notepad .env
+```
+
+在 `.env` 中必须替换 `POSTGRES_PASSWORD` 和 `N8N_ENCRYPTION_KEY`。AI Key 是可选项：
+没有 Key 仍可运行普通网页采集、确定性分析和 HTML 报告；Browser Use 交互采集与
+PandasAI 自然语言问答才需要 AI Key。
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\检查运行环境.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\finish-docker-n8n.ps1
+```
+
+启动完成后打开：
+
+- 中文控制台：<http://127.0.0.1:8000/>
+- API 文档：<http://127.0.0.1:8000/api/docs>
+- n8n：<http://127.0.0.1:5678>
+
+DeepSeek、OpenAI 和其他 OpenAI 兼容服务的完整 `.env` 示例、首次构建说明、验证方法
+及常见故障都在 [`使用说明.txt`](使用说明.txt) 中。
 
 系统做的事情：
 

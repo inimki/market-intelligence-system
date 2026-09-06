@@ -85,7 +85,7 @@ POST http://api:8000/api/runs
 3. 点击 Execute workflow。
 4. 等待节点变绿。
 
-也可以打开 <http://127.0.0.1:8000/docs>，在 `POST /api/runs` 点击 `Try it out` 和 `Execute`。
+也可以打开 <http://127.0.0.1:8000/api/docs>，在 `POST /api/runs` 点击 `Try it out` 和 `Execute`。
 
 结果字段含义：
 
@@ -99,7 +99,7 @@ POST http://api:8000/api/runs
 ## 5. 查看结果
 
 - 最新报告：<http://127.0.0.1:8000/reports/latest>
-- API 操作页：<http://127.0.0.1:8000/docs>
+- API 操作页：<http://127.0.0.1:8000/api/docs>
 - 信源列表：<http://127.0.0.1:8000/api/sources>
 - 运行历史：<http://127.0.0.1:8000/api/runs>
 - 已入库情报：<http://127.0.0.1:8000/api/items>

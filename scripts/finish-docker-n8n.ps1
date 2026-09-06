@@ -2,7 +2,13 @@
 
 $ProjectDir = Split-Path -Parent $PSScriptRoot
 $ComposeFile = Join-Path $ProjectDir "docker-compose.yml"
-$DockerExe = "C:\Program Files\Docker\Docker\resources\bin\docker.exe"
+$DockerCommand = Get-Command docker.exe -ErrorAction SilentlyContinue
+$DockerExe = if ($null -ne $DockerCommand) {
+    $DockerCommand.Source
+}
+else {
+    "C:\Program Files\Docker\Docker\resources\bin\docker.exe"
+}
 $DockerDesktop = "C:\Program Files\Docker\Docker\Docker Desktop.exe"
 $WorkflowName = "市场情报自动收集与报告"
 $WorkflowId = "marketIntelDaily01"
@@ -12,6 +18,9 @@ if (-not (Test-Path -LiteralPath $DockerExe)) {
 }
 if (-not (Test-Path -LiteralPath $ComposeFile)) {
     throw "Compose file was not found at $ComposeFile"
+}
+if (-not (Test-Path -LiteralPath (Join-Path $ProjectDir ".env"))) {
+    throw "Missing .env. Copy .env.example to .env and configure it before installation."
 }
 
 Write-Host "[1/6] Checking WSL and Docker Desktop..."

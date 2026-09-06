@@ -65,5 +65,5 @@ if ($ReadyPorts.Count -ne 3) {
 
 Write-Host ""
 Write-Host "系统启动成功。"
-Write-Host "API 文档：http://127.0.0.1:8000/docs"
+Write-Host "API 文档：http://127.0.0.1:8000/api/docs"
 Write-Host "最新报告：http://127.0.0.1:8000/reports/latest"
