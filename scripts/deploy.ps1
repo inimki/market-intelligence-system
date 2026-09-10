@@ -47,6 +47,17 @@ try {
     & docker compose config --quiet
     if ($LASTEXITCODE -ne 0) { throw "Invalid Compose configuration. Review .env without sharing its secrets." }
 
+    # Read the resolved build path without logging interpolated secrets.
+    $ComposeJson = & docker compose config --format json
+    if ($LASTEXITCODE -ne 0) { throw "Unable to resolve the learning site build context." }
+    $LearningBuild = ($ComposeJson | ConvertFrom-Json).services.nginx.build
+    foreach ($RequiredFile in @('package.json', 'package-lock.json', 'Dockerfile.nginx', 'scripts/build-static.mjs')) {
+        if (-not (Test-Path -LiteralPath (Join-Path $LearningBuild.context $RequiredFile) -PathType Leaf)) {
+            throw "Learning site source is incomplete: $RequiredFile. Download the full repository including learning-site, or check LEARNING_SITE_CONTEXT."
+        }
+    }
+    $ComposeJson = $null
+
     # The existing installer also seeds sources and imports/publishes the schedule.
     & (Join-Path $PSScriptRoot "finish-docker-n8n.ps1")
     $Url = "http://127.0.0.1:$WebPort"
@@ -60,7 +71,9 @@ try {
     if (-not $Healthy) { throw "Nginx is not ready. Run: docker compose logs --tail 80 nginx api" }
     & docker compose exec -T nginx nginx -t
     if ($LASTEXITCODE -ne 0) { throw "Nginx configuration validation failed." }
+    & (Join-Path $PSScriptRoot "verify-learn.ps1") -BaseUrl $Url
     Write-Host "Ready: $Url" -ForegroundColor Green
+    Write-Host "Learn: $Url/learn/"
     Write-Host "Help: $Url/help | n8n: http://127.0.0.1:5678"
     Write-Host "Optional: configure AI_* in .env, then run this launcher again."
     if (-not $NoBrowser) { Start-Process $Url }

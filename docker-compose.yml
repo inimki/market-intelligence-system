@@ -1,6 +1,11 @@
 services:
   nginx:
-    image: public.ecr.aws/docker/library/nginx:1.28-alpine
+    image: market-intelligence-nginx:local
+    build:
+      context: ${LEARNING_SITE_CONTEXT:-./learning-site}
+      dockerfile: Dockerfile.nginx
+      args:
+        LEARNING_SITE_ORIGIN: ${LEARNING_SITE_ORIGIN:-http://127.0.0.1:${WEB_PORT:-8080}}
     restart: unless-stopped
     ports:
       - "127.0.0.1:${WEB_PORT:-8080}:80"
@@ -12,7 +17,7 @@ services:
       api:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1/health"]
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1/health && wget -q -O /dev/null http://127.0.0.1/learn/"]
       interval: 15s
       timeout: 5s
       retries: 10

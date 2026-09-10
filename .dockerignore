@@ -14,3 +14,13 @@ data/*
 *.log
 *.key
 *.pem
+learning-site
+**/node_modules
+**/.openai
+**/.wrangler
+**/.next
+**/out
+*.bak
+*.dump
+*.zip
+*.tar.gz

@@ -11,6 +11,7 @@
 2. 下载并解压
 项目：https://github.com/inimki/market-intelligence-system
 点击 Code → Download ZIP，解压到普通文件夹，不要在压缩包中运行。
+学习站源码已包含在 learning-site 文件夹，无需另行下载或注册云端托管账号。
 若已安装 Git，也可执行：
 git clone https://github.com/inimki/market-intelligence-system.git
 
@@ -24,6 +25,7 @@ git clone https://github.com/inimki/market-intelligence-system.git
 
 4. 打开平台
 平台首页：http://127.0.0.1:8080/
+源码学习站：http://127.0.0.1:8080/learn/
 浏览器图文指南：http://127.0.0.1:8080/help
 API 操作页：http://127.0.0.1:8080/api/docs
 最新报告：http://127.0.0.1:8080/reports/latest

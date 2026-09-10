@@ -17,7 +17,7 @@ try {
     $Before = (Get-FileHash -LiteralPath $EnvPath).Hash
     & $InitScript -ProjectDir $TestDir
     if ((Get-FileHash -LiteralPath $EnvPath).Hash -ne $Before) { throw "Existing .env was modified" }
-    foreach ($Name in @("deploy.ps1", "init-env.ps1", "finish-docker-n8n.ps1")) {
+    foreach ($Name in @("deploy.ps1", "init-env.ps1", "finish-docker-n8n.ps1", "verify-learn.ps1")) {
         $ParseErrors = $null
         [Management.Automation.Language.Parser]::ParseFile((Join-Path $ProjectDir "scripts\$Name"), [ref]$null, [ref]$ParseErrors) | Out-Null
         if ($ParseErrors.Count) { throw "PowerShell parse failed: $Name" }

@@ -1,0 +1,17 @@
+ARG NODE_IMAGE=public.ecr.aws/docker/library/node:22-bookworm-slim
+ARG NGINX_IMAGE=public.ecr.aws/docker/library/nginx:1.28-alpine
+
+FROM ${NODE_IMAGE} AS learning-build
+WORKDIR /site
+ARG LEARNING_SITE_ORIGIN=http://127.0.0.1:8080
+ENV LEARNING_SITE_ORIGIN=${LEARNING_SITE_ORIGIN}
+ENV NEXT_TELEMETRY_DISABLED=1
+COPY package.json package-lock.json ./
+RUN npm ci --include=dev --no-audit --no-fund
+COPY . .
+RUN npm run build:static
+
+FROM ${NGINX_IMAGE}
+# The system's Compose mounts its shared Nginx configuration and help pages.
+# No Node runtime, source tree or node_modules enter the final image.
+COPY --from=learning-build /site/out/ /usr/share/nginx/html/learn/

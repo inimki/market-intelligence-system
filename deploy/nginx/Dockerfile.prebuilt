@@ -1,0 +1,7 @@
+# Optional: package an already validated static export when Node image downloads
+# are unavailable. Build context MUST be market-intel-learning-site/out only.
+FROM public.ecr.aws/docker/library/nginx:1.28-alpine
+COPY . /usr/share/nginx/html/learn/
+RUN test -s /usr/share/nginx/html/learn/index.html \
+    && test -s /usr/share/nginx/html/learn/404.html \
+    && test -d /usr/share/nginx/html/learn/_next/static

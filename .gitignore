@@ -38,3 +38,25 @@ pandasai.log
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# Frontend dependencies, generated output, and private hosting state
+node_modules/
+.next/
+out/
+dist/
+*.tsbuildinfo
+next-env.d.ts
+.openai/
+.wrangler/
+.vinext/
+.vercel/
+
+# Local database sidecars and backup material
+*.db-wal
+*.db-shm
+*.sqlite*
+*.bak
+*.backup
+*.dump
+*.zip
+*.tar.gz

@@ -6,7 +6,11 @@
 输入行业和公司，发现公开官网信源，采集、清洗和去重，生成有来源链接的中文 HTML 报告。
 适合本地调研、个人学习和市场情报工作流实践。
 
-**Windows：安装并启动 Docker Desktop → 下载并解压代码 → 双击 `一键部署.cmd`。**
+**Windows：启动 Docker Desktop → 下载并解压本仓库 → 双击 `一键部署.cmd`。**
+
+学习站源码已包含在 `learning-site/`，由同一个 Nginx 在 `/learn/` 提供访问。
+无需另下载学习站，也不需要 Sites / Cloudflare 账号。
+详见[学习站静态部署与验收](docs/学习站静态部署.md)。
 
 [下载项目 ZIP](https://github.com/inimki/market-intelligence-system/archive/refs/heads/main.zip) ·
 [中文使用说明（TXT）](使用说明.txt) · [开发与代码解析](docs/开发指南.md) ·
@@ -42,6 +46,7 @@
 ## Windows 一键部署
 
 1. 在 GitHub 点击 **Code → Download ZIP**，解压到普通文件夹。不能直接在压缩包内运行。
+   确认解压后的根目录含 `learning-site/package.json` 和 `一键部署.cmd`。
 2. 打开 Docker Desktop，等待 **Engine running**。
 3. 双击项目根目录 **一键部署.cmd**。
 4. 首次下载和构建可能持续较长时间；以终端进度为准。完成后浏览器自动打开控制台。
@@ -66,6 +71,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\deploy.ps1
 | 页面 | 地址 |
 |---|---|
 | 平台首页（Nginx） | http://127.0.0.1:8080/ |
+| 源码学习站 | http://127.0.0.1:8080/learn/ |
 | 浏览器使用指南 | http://127.0.0.1:8080/help |
 | API 操作页 | http://127.0.0.1:8080/api/docs |
 | 最新报告 | http://127.0.0.1:8080/reports/latest |
@@ -74,7 +80,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\deploy.ps1
 在首页点击“新建市场调研”，输入行业、公司及关注主题，提交后打开或下载报告。
 未生成过报告时，“最新报告”暂时不可用。n8n 保持独立管理入口。
 
-Nginx 负责转发请求和提供静态帮助页，FastAPI 继续生成页面、执行调研和报告。
+Nginx 负责转发请求、提供静态帮助页和学习站，FastAPI 继续生成页面、执行调研和报告。
 该调整便于以后配置域名、HTTPS 与访问控制；它本身不会提高抓取成功率或 AI 分析质量。
 
 ## 可选：接入 AI
@@ -115,6 +121,7 @@ docker compose logs --tail 80 nginx api  # 网页故障日志
 ## Linux / macOS
 
 Compose 配置使用 Linux 容器；当前一键入口和端到端验收面向 Windows Docker Desktop。
+学习站源码随仓库提供，无需准备额外目录。旧版配置若指向相邻学习站，请将 `LEARNING_SITE_CONTEXT` 改为 `./learning-site`。
 其他系统需要 Docker Engine/Desktop 和 Compose V2，按以下顺序手动部署：
 
 ```bash

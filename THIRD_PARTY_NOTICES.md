@@ -43,7 +43,25 @@ Required attribution:
 - License: 2-clause BSD-style license; see https://nginx.org/LICENSE
 - This repository references the official Nginx container and includes its own proxy configuration.
 
-## Additional dependencies
+## Bundled learning-site source
+
+The original learning page and its authored assets in `learning-site/` are
+distributed under this repository's root MIT License. Personal Sites hosting
+configuration and cloud publishing tools are not part of this distribution.
+
+- Next.js: https://github.com/vercel/next.js — MIT, Vercel, Inc.
+- React / React DOM: https://github.com/facebook/react — MIT, Meta Platforms, Inc. and affiliates.
+- Tailwind CSS: https://github.com/tailwindlabs/tailwindcss — MIT, Tailwind Labs, Inc.
+- TypeScript: https://github.com/microsoft/TypeScript — Apache-2.0, Microsoft Corporation.
+- ESLint: https://github.com/eslint/eslint — MIT, OpenJS Foundation and contributors.
+
+The exact dependency tree is recorded in `learning-site/package-lock.json`.
+Installed packages retain their upstream LICENSE files; Next's generated
+third-party license comments must not be stripped from distributed bundles.
+Other transitive dependencies retain their own terms. The root MIT License
+does not replace these third-party licenses.
+
+## Python and service dependencies
 
 Python packages, container images, PostgreSQL, Playwright/Chromium, DeepSeek or
 other model APIs, and their transitive dependencies remain under their own

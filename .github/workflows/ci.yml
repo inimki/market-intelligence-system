@@ -12,6 +12,8 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - name: Verify Windows first-run configuration
         shell: powershell
         run: ./tests/test-bootstrap.ps1
@@ -20,6 +22,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
@@ -27,6 +31,55 @@ jobs:
       - name: Install test dependencies
         run: pip install -e ".[dev]"
       - name: Lint
-        run: ruff check app tests
+        run: ruff check app tests scripts/check-publication.py
       - name: Test
         run: pytest -q
+
+  learning-site:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: learning-site/package-lock.json
+      - name: Install locked dependencies
+        working-directory: learning-site
+        run: npm ci
+      - name: Audit dependencies
+        working-directory: learning-site
+        run: npm audit --audit-level=high
+      - name: Lint and export
+        working-directory: learning-site
+        run: npm run lint && npm run build:static
+      - name: Validate public file boundary
+        run: python scripts/check-publication.py
+      - name: Build Nginx from bundled source
+        run: docker compose --env-file .env.example build nginx
+      - name: Start isolated static preview
+        run: |
+          docker run -d --name learning-ci -p 127.0.0.1:18080:80 \
+            -v "$PWD/deploy/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro" \
+            -v "$PWD/deploy/site/help.html:/usr/share/nginx/html/help.html:ro" \
+            -v "$PWD/使用说明.txt:/usr/share/nginx/html/guide.txt:ro" \
+            market-intelligence-nginx:local
+          docker exec learning-ci nginx -t
+      - name: Verify static HTTP routes
+        shell: pwsh
+        run: ./scripts/verify-learn.ps1 -BaseUrl http://127.0.0.1:18080 -SkipApi
+      - name: Remove isolated preview
+        if: always()
+        run: docker rm -f learning-ci || true
+
+  secrets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Scan history with redacted output
+        run: docker run --rm -v "$PWD:/repo:ro" zricethezav/gitleaks:v8.30.1 git /repo --redact --no-banner --log-opts=--all

@@ -1,0 +1,13 @@
+# Only build inputs are sent to Docker; exclude caches, exports and local env.
+**
+!package.json
+!package-lock.json
+!next.config.ts
+!tsconfig.json
+!postcss.config.mjs
+!app/
+!app/**
+!public/
+!public/**
+!scripts/
+!scripts/**
